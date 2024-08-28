@@ -15,6 +15,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/v1/curpManager/api/curp-bio-data/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/v1/curpManager/api/curp-bio-data/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable();

@@ -27,4 +27,10 @@ public class CurpBioController {
         }
     }
 
+    @GetMapping("/process-curp/{curpId}/{curpType}")
+    public String processCurpByIdAndType(
+            @PathVariable("curpId") String curpId,
+            @PathVariable("curpType") String curpType) {
+        return curpBioHelper.findAndProcessCurpByIdAndType(curpId, curpType);
+    }
 }

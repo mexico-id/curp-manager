@@ -8,6 +8,7 @@ import io.mosip.kernel.core.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Component
@@ -33,7 +34,7 @@ public class CurpBioHelper {
             MatchedCurp matchedCurp = matchedCurpService.findCurpId(matchedCurpDto.getCurpId());
             MatchedCurp matchedCurpId = matchedCurpService.findMatchedCurpId(matchedCurpDto.getMatchedCurpIds());
             if(matchedCurpId!=null){
-                LOGGER.info("matched curpId is already exists"+matchedCurpId.getMatchedCurpIds());
+                LOGGER.info("matched curpId is already exists: "+matchedCurpId.getMatchedCurpIds());
             }
         else if (matchedCurp != null) {
                 String updatedMatchedCurpIds = matchedCurp.getMatchedCurpIds() + "," + matchedCurpDto.getMatchedCurpIds();
@@ -57,5 +58,23 @@ public class CurpBioHelper {
                 }
             }
             return "CurpBioData and MatchedCurp updated successfully";
+    }
+    public String findAndProcessCurpByIdAndType(String curpId, String curpType) {
+
+        Optional<CurpBioData> curpBioDataOptional = curpService.findCurpBioDataByIdAndType(curpId, curpType);
+        if (curpBioDataOptional.isPresent()) {
+            CurpBioData curpBioData = curpBioDataOptional.get();
+            if ("NEW".equalsIgnoreCase(curpBioData.getCurpType())) {
+                curpBioData.setCurpStatus("PROCESSED");
+                curpBioData.setCrBy("SYSTEM");
+                curpBioData.setUpdDtimes(DateUtils.getUTCCurrentDateTime());
+                curpService.updateCurpBioData(curpBioData);
+                return "CurpBioData status updated to PROCESSED for curpId: " + curpId;
+            } else {
+                return "CurpBioData curpType is not 'NEW', no update made for curpId: " + curpId;
+            }
+        } else {
+            return "CurpBioData not found for curpId: " + curpId + " and curpType: " + curpType;
+        }
     }
 }

@@ -34,5 +34,9 @@ public class CurpService {
         Optional<CurpBioData> curpId = curpBioDataRepository.findByCurpId(curp_id);
         return curpId.orElse(null);
     }
+
+    public Optional<CurpBioData> findCurpBioDataByIdAndType(String curpId, String curpType) {
+        return curpBioDataRepository.findByCurpIdAndCurpType(curpId, curpType);
+    }
 }
 
